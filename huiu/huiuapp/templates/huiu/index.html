@@ -1,0 +1,28 @@
+{% extends 'huiu/base.html' %}
+{% block content %}
+    <div class="panel">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Rank</div>
+        <div class="panel-body">
+                <p>{{ time }}</p>
+        </div>
+        
+        <!-- Table --> 
+        <table class="tables">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>RankName</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for a in ranks %}
+                <tr>
+                <td>{{ a.RankID }}</td>
+                <td><a href="{{ a.RankWeb }}">{{ a.RankName }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

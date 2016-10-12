@@ -1,0 +1,62 @@
+{% load staticfiles %}
+<html>
+<head>
+    <title>huiu</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <link href="http://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+
+    {% if form.errors %}
+        <p>Your username and password didn't match.Please try again.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+        {% else %}
+            <p>Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <div class="login">
+        <div class="login-logo" align="center">
+            <h1>
+                <a class="logo" href="/index/">huiu</a>
+            </h1>
+        </div>
+        <div class="login-total">
+            <div class="login-header">
+                <p>login</p>
+            </div>
+        </div>
+        <div class="login-user" align="center">
+            <div class="input-username">
+                <!-- <input id="id_username" placeholder="username" type="text"> -->
+                <td>{{ form.username }}</td>
+            </div>
+            <div class="input-password">
+                <!-- <input id="id_password" placeholder="password" type="password"> -->
+                <td>{{ form.password }}</td>
+            </div >
+            <div class="btm-total">
+                <div class="come-home" target="_self">
+	            <a id="come-home" href="index.html">home</a>
+                </div>
+                <div class="sign-up">
+                    <a id="sign-up" href="#">login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+</body>
+</html>
