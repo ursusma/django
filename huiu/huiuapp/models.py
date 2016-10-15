@@ -11,3 +11,11 @@ class Rank(models.Model):
 
     def __str__(self):
         return self.RankName
+
+class Status(models.Model):
+    idle = models.TextField()
+    systime = models.TextField()
+    usersnumber = models.TextField()
+    loadavg = models.TextField()
+    cpufree = models.TextField()
+    momeryfree = models.TextField()

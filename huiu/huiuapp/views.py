@@ -2,11 +2,12 @@ from django.shortcuts import render,render_to_response
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponseRedirect
-from .models import Rank
+from .models import *
 from datetime import datetime
 
 import urllib.request
 import re
+import os
 
 # Create your views here.
 
@@ -51,3 +52,55 @@ def index(request):
 
 def login(request):
     return render(request,'huiu/login.html')
+
+def status(request):
+
+    def Cpustat():
+        cpudate = os.popen('vmstat')
+        cpufree = cpudate.read().split()
+        cpufree = int(cpufree[-5]) + int(cpufree[-4])
+        return cpufree
+
+    def idlestat():
+        idle = os.popen('vmstat')
+        idledate = idle.read().split()
+        idledate = idledate[-3]
+        return idledate
+
+    def Systime():
+        time = datetime.now()
+        return time
+
+    def Usersnumber():
+        usersnum = os.popen('uptime')
+        usersdate = usersnum.read().split()
+        usersdate = usersdate[6]
+        return usersdate
+
+    def Loadavg():
+        with open('/proc/loadavg').readline() as load:
+            loadavg = load.split()
+            loadavg = loadavg[0]
+        return loadavg
+
+    def Memoryfree():
+        memory = open('/proc/meminfo')
+        memorydate = memory.read().split()
+        memorydate = memorydate[4]
+        memory.close()
+        return memorydate
+
+    def signtime():
+        sign = os.popen('uptime')
+        signdate = sign.read().split()
+        signdate = signdate[3]
+        return signdate
+
+    def date(a,b,c,d,e,f):
+        Status.objects.all().delete()
+        Status.objects.create(cpufree = a,idle = b, systime = c, usersnumber = d, loadavg = e, memoryfree = f)
+
+    time = Systime()
+    date(Cpustat(),idlestat(),signtime(),Usersnumber(),Loadavg(),Memoryfree())
+
+    return render(request,'huiu/status.html',{'status':Status,'time':time})
