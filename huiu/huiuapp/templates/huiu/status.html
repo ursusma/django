@@ -2,7 +2,7 @@
 {% block content %}
     <div class="panel">
         <!-- Default panel contents -->
-        <div class="panel-heading">Rank</div>
+        <div class="panel-heading">server Status</div>
         <div class="panel-body">
                 <p>{{ time }}</p>
         </div>
@@ -11,17 +11,35 @@
         <table class="tables">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>RankName</th>
+                    <th>server name</th>
+                    <th>status</th>
                 </tr>
             </thead>
             <tbody>
-            {% for a in ranks %}
+                {% for st in status %}
                 <tr>
-                <td>{{ a.RankID }}</td>
-                <td><a href="{{ a.RankWeb }}">{{ a.RankName }}</a></td>
+                <td>days</td>
+                <td>{{ st.systime }}</td>
                 </tr>
-            {% endfor %}
+                <td>users</td>
+                <td>{{ st.usersnumber }}</td>
+                <tr>
+                <td>cpu</td>
+                <td>{{ st.cpufree }}</td>
+                </tr>
+                <tr>
+                <td>idle</td>
+                <td>{{ st.idlestat }}</td>
+                </tr>
+                <tr>
+                <td>load</td>
+                <td>{{ st.loadavg }}</td>
+                </tr>
+                <tr>
+                <td>memoryfree</td>
+                <td>{{ st.memoryfree }}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

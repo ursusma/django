@@ -74,13 +74,15 @@ def status(request):
     def Usersnumber():
         usersnum = os.popen('uptime')
         usersdate = usersnum.read().split()
-        usersdate = usersdate[6]
+        usersdate = usersdate[5]
         return usersdate
 
     def Loadavg():
-        with open('/proc/loadavg').readline() as load:
-            loadavg = load.split()
-            loadavg = loadavg[0]
+        f = open('/proc/loadavg')
+        load = f.read()
+        loadavg = load.split()
+        loadavg = loadavg[0]
+        f.close()
         return loadavg
 
     def Memoryfree():
@@ -93,14 +95,15 @@ def status(request):
     def signtime():
         sign = os.popen('uptime')
         signdate = sign.read().split()
-        signdate = signdate[3]
+        signdate = signdate[2]
         return signdate
 
     def date(a,b,c,d,e,f):
         Status.objects.all().delete()
-        Status.objects.create(cpufree = a,idle = b, systime = c, usersnumber = d, loadavg = e, memoryfree = f)
+        Status.objects.create(cpufree = a,idlestat = b, systime = c, usersnumber = d, loadavg = e, memoryfree = f)
 
     time = Systime()
     date(Cpustat(),idlestat(),signtime(),Usersnumber(),Loadavg(),Memoryfree())
+    all = Status.objects.all()
 
-    return render(request,'huiu/status.html',{'status':Status,'time':time})
+    return render(request,'huiu/status.html',{'status':all,'time':time})
