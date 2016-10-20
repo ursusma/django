@@ -1,13 +1,20 @@
 from django.shortcuts import render,render_to_response
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from .models import *
 from datetime import datetime
+from django.utils.encoding import smart_str
 
 import urllib.request
 import re
 import os
+import hashlib
+import json
+import requests
+import traceback
+import xml.etree.ElementTree as ET
 
 # Create your views here.
 
@@ -107,3 +114,38 @@ def status(request):
     all = Status.objects.all()
 
     return render(request,'huiu/status.html',{'status':all,'time':time})
+
+wxtoken = 'wslnr'
+
+@csrf_exempt
+def lnr(request):
+
+    def get(request):
+        signature = request.GET.get("signature","")
+        timestamp = request.GET.get("timestamp","")
+        nonce = request.GET.get("nonce","")
+        echostr = request.GET.get("echostr","")
+        token = wxtoken
+
+        tmp_list = [token,timestamp,nonce]
+        tmp_list.sort()
+        tmp_str = tmp_list[0] + tmp_list[1] + tmp_list[2]
+        tmpstr = hashlib.sha1(tmp_str.encode('utf-8')).hexdigest()
+
+        if tmpstr == signature:
+            return echostr
+        else:
+            return 'error'
+
+    def post(request):
+        if len(request.body) == 0:
+            return None
+        xmlData = ET.fromstring(request.body)
+        msg_type = xmlData.find('MsgType').text
+#       key = '9d6be4eba9a04bd7bfcc13a130111768'
+#        url = 'http://www.tuling123.com/openapi/api'
+
+    if request.method == "GET":
+         return HttpResponse(get(request))
+    elif request.method == "POST":
+         return HttpResponse(post(request))
