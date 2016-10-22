@@ -116,8 +116,8 @@ def status(request):
 
     return render(request,'huiu/status.html',{'status':all,'time':time})
 
-wxtoken = 'wslnr'
-key = '9d6be4eba9a04bd7bfcc13a130111768'
+wxtoken = '******'
+key = '******'
 url = 'http://www.tuling123.com/openapi/api'
 
 @csrf_exempt
