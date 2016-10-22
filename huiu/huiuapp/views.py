@@ -15,6 +15,7 @@ import json
 import requests
 import traceback
 import xml.etree.ElementTree as ET
+import time
 
 # Create your views here.
 
@@ -116,6 +117,8 @@ def status(request):
     return render(request,'huiu/status.html',{'status':all,'time':time})
 
 wxtoken = 'wslnr'
+key = '9d6be4eba9a04bd7bfcc13a130111768'
+url = 'http://www.tuling123.com/openapi/api'
 
 @csrf_exempt
 def lnr(request):
@@ -137,15 +140,54 @@ def lnr(request):
         else:
             return 'error'
 
-    def post(request):
-        if len(request.body) == 0:
+    def getjson(recMsg):
+        f = {"key":key,"info":recMsg}
+        r = requests.post(url,data=f)
+        resp = r.text
+        if len(resp) == 0:
             return None
+        js = json.loads(resp)
+        if js['code'] == 100000:
+            return js['text'].replace('<br>','\n')
+        elif js['code'] == 200000:
+            return js['url']
+        else:
+            return None
+
+    def resplay(to,fr,con):
+        ti = int(time.time())
+        xmlForm = '''
+            <xml>
+            <ToUserName><![CDATA[%s]]></ToUserName>
+            <FromUserName><![CDATA[%s]]></FromUserName>
+            <CreateTime>%d</CreateTime>
+            <MsgType><![CDATA[text]]></MsgType>
+            <Content><![CDATA[%s]]></Content>
+            </xml>
+            '''%(to,fr,ti,con)
+        return xmlForm
+
+    def post(request):
         xmlData = ET.fromstring(request.body)
-        msg_type = xmlData.find('MsgType').text
-#       key = '9d6be4eba9a04bd7bfcc13a130111768'
-#        url = 'http://www.tuling123.com/openapi/api'
+
+        touser = xmlData.find('ToUserName').text
+        fromuser = xmlData.find('FromUserName').text
+        msgtype = xmlData.find('MsgType').text
+        content = xmlData.find('Content').text.encode('utf-8')
+
+        aio = getjson(content)
+
+        da = [touser,fromuser,msgtype,aio]
+
+        if da[2] == 'text':
+            to = da[1]
+            fr = da[0]
+            con = da[3]
+            res = resplay(to,fr,con)
+            return res
+        
 
     if request.method == "GET":
-         return HttpResponse(get(request))
+        return HttpResponse(get(request))
     elif request.method == "POST":
-         return HttpResponse(post(request))
+        return HttpResponse(post(request))
